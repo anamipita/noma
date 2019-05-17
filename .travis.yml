@@ -11,10 +11,10 @@ script:
   - docker run anamip/noma npm test -- --coverage
 
 after_success:
-  - docker build -t anamip/multi-client ./client
-  - docker build -t anamip/multi-nginx  ./nginx 
-  - docker build -t anamip/multi-server ./server
-  - docker build -t anamip/multi-worker ./worker
+  - docker build -t anamip/noma-client ./client
+  - docker build -t anamip/noma-nginx  ./nginx 
+  - docker build -t anamip/noma-server ./server
+  - docker build -t anamip/noma-worker ./worker
 
   # push images to docker hub
   # login to Docker cli
@@ -25,10 +25,10 @@ after_success:
 
   #take those images and push them to docker hub
   
-  - docker push anamip/multi-client
-  - docker push anamip/multi-server
-  - docker push anamip/multi-worker
-  - docker push anamip/multi-nginx
+  - docker push anamip/noma-client
+  - docker push anamip/noma-server
+  - docker push anamip/noma-worker
+  - docker push anamip/noma-nginx
 
 
 # deploy:
