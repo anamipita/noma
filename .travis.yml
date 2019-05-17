@@ -1,0 +1,47 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t anamip/kwaa -f ./client/Dockerfile.dev ./client
+
+
+script:
+  - docker run anamip/kwaa npm test -- --coverage
+
+after_success:
+  - docker build -t anamip/multi-client ./client
+  - docker build -t anamip/multi-nginx  ./nginx 
+  - docker build -t anamip/multi-server ./server
+  - docker build -t anamip/multi-worker ./worker
+
+  # push images to docker hub
+  # login to Docker cli
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+   
+
+
+  #take those images and push them to docker hub
+  
+  - docker push anamip/multi-client
+  - docker push anamip/multi-server
+  - docker push anamip/multi-worker
+  - docker push anamip/multi-nginx
+
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-Docker
+  env:  MultiDocker-env
+  bucket_name: elasticbeanstalk-us-east-2-926812029837
+  bucket_path: docker-multi
+
+  on:
+
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY  
